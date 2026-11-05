@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicSphere · Smart Civic Operations · Karnataka State</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Maps CSS & JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Chart.js for High-Resolution Visual Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Modern Civic Design System -->
+  <link rel="icon" type="image/png" href="assets/logo_icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Topbar Header -->
+  <header class="header-nav">
+    <div class="container nav-inner">
+      <a href="#home" class="brand-wrapper" title="CivicSphere · Smart Civic Operations">
+        <img src="assets/logo_icon.png" alt="CivicSphere Logo" style="height: 44px; width: auto; object-fit: contain; border-radius: 8px;">
+        <div class="brand-text">
+          <b>CivicSphere</b>
+          <span>Smart Civic Operations · Karnataka</span>
+        </div>
+      </a>
+
+      <!-- Decongested Desktop Navigation Links -->
+      <nav class="nav-links">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#report" class="nav-link">Report</a>
+        <a href="#track" class="nav-link">Track</a>
+        <a href="#map" class="nav-link">Live Map</a>
+        <a href="#officer" class="nav-link">Officer Queue</a>
+        <a href="#dashboard" class="nav-link">Command Centre</a>
+      </nav>
+
+      <!-- Action Items & Theme Switcher -->
+      <div class="nav-actions">
+        <button class="voice-assistant-nav-btn" onclick="window.toggleVoiceAssistant()" title="Talk to AI Voice Assistant" aria-label="Voice Assistant">
+          <span class="mic-wave-icon">🎙️</span>
+          <span class="voice-btn-label">Voice AI</span>
+          <span class="voice-live-dot"></span>
+        </button>
+        <button class="theme-toggle-btn" onclick="window.openThemeModal()" title="Customize Appearance & Colors" aria-label="Customize Appearance & Colors" style="position:relative;">
+          🎨
+          <span id="active-palette-dot" style="position:absolute; bottom:5px; right:5px; width:8px; height:8px; border-radius:50%; background:var(--accent-primary); border:1.5px solid var(--bg-surface);"></span>
+        </button>
+        <button class="theme-toggle-btn" onclick="window.openApiSettingsModal()" title="Backend API Connection Settings (Render / Local)" aria-label="Backend API Settings" style="position:relative;">
+          🔌
+          <span id="backend-status-dot" style="position:absolute; bottom:5px; right:5px; width:8px; height:8px; border-radius:50%; background:#22c55e; border:1.5px solid var(--bg-surface);"></span>
+        </button>
+        <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Toggle Quick Dark/Light" aria-label="Toggle Quick Dark/Light">
+          🌓
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="window.location.hash='#report'">
+          + Report Issue
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dynamic View Render Target -->
+  <main id="main-view" class="view-content"></main>
+
+  <!-- Multi-Agent Processing Theater Modal -->
+  <div class="agent-modal-overlay" id="agent-modal">
+    <div class="agent-modal-box">
+      <div class="agent-scanner-bar">
+        <div class="agent-scanner-beam"></div>
+      </div>
+      <div style="text-align:center;">
+        <div class="agent-header-badge-row">
+          <span style="font-size: 0.78rem; font-weight: 800; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.08em;">Autonomous AI Crew</span>
+          <span class="speed-pulse-badge">⚡ Turbo Fast Dispatch</span>
+        </div>
+        <h2 style="font-size:1.45rem; font-weight:800; margin-top:4px;">Triaging Civic Incident...</h2>
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-top:2px;">Parallel agent evaluation, multi-channel clustering, and instant crew dispatch.</p>
+        
+        <!-- High-Speed Live Progress Indicator -->
+        <div class="agent-progress-track">
+          <div class="agent-progress-fill" id="agent-progress-fill" style="width: 0%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono); margin-top:6px;">
+          <span id="agent-speed-badge">⚡ Quantum Agent Parallelism</span>
+          <span id="agent-progress-pct" style="font-weight:800; color:var(--accent-primary);">0%</span>
+        </div>
+      </div>
+
+      <div class="agent-pipeline-list">
+        <div class="agent-step-item" id="agent-step-1">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">📥</span>
+            <div>
+              <b style="font-size:0.9rem;">1. Intake & Geocoding Agent</b>
+              <div class="step-desc" style="font-size:0.78rem; color:var(--text-muted);">Scanning ward jurisdiction and hospital buffers...</div>
+            </div>
+          </div>
+          <span class="step-status-icon">⏳</span>
+        </div>
+
+        <div class="agent-step-item" id="agent-step-2">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">👁️</span>
+            <div>
+              <b style="font-size:0.9rem;">2. Vision & Semantic Classifier</b>
+              <div class="step-desc" style="font-size:0.78rem; color:var(--text-muted);">Analyzing photographic evidence and hazard text...</div>
+            </div>
+          </div>
+          <span class="step-status-icon">⏳</span>
+        </div>
+
+        <div class="agent-step-item" id="agent-step-3">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">🧬</span>
+            <div>
+              <b style="font-size:0.9rem;">3. Spatial Duplicate Detector</b>
+              <div class="step-desc" style="font-size:0.78rem; color:var(--text-muted);">Checking existing complaints within 60m radius...</div>
+            </div>
+          </div>
+          <span class="step-status-icon">⏳</span>
+        </div>
+
+        <div class="agent-step-item" id="agent-step-4">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">⚖️</span>
+            <div>
+              <b style="font-size:0.9rem;">4. Priority & SLA Planner</b>
+              <div class="step-desc" style="font-size:0.78rem; color:var(--text-muted);">Scoring severity and calculating statutory target...</div>
+            </div>
+          </div>
+          <span class="step-status-icon">⏳</span>
+        </div>
+
+        <div class="agent-step-item" id="agent-step-5">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">🧭</span>
+            <div>
+              <b style="font-size:0.9rem;">5. Routing & Field Crew Dispatch</b>
+              <div class="step-desc" style="font-size:0.78rem; color:var(--text-muted);">Allocating designated ward engineer and team...</div>
+            </div>
+          </div>
+          <span class="step-status-icon">⏳</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Theme & Color Appearance Drawer -->
+  <div class="theme-modal-overlay" id="theme-modal" onclick="if(event.target===this) window.closeThemeModal()">
+    <div class="theme-modal-drawer">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:800; letter-spacing:-0.02em;">Theme & Colors</h2>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">Personalize your civic operational interface.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="window.closeThemeModal()" style="font-size:1.2rem; padding:4px 8px;">✕</button>
+      </div>
+
+      <!-- Accent Color Palette Picker -->
+      <div>
+        <label class="form-label" style="margin-bottom:10px; display:block;">Accent Color Palette</label>
+        <div class="theme-palette-grid">
+          <button class="palette-btn" data-accent="blue" onclick="window.setAccentColor('blue')">
+            <span class="palette-dot" style="background:#2563eb;"></span>
+            <span class="palette-name">Civic Blue</span>
+          </button>
+          <button class="palette-btn" data-accent="emerald" onclick="window.setAccentColor('emerald')">
+            <span class="palette-dot" style="background:#059669;"></span>
+            <span class="palette-name">Garden City</span>
+          </button>
+          <button class="palette-btn" data-accent="indigo" onclick="window.setAccentColor('indigo')">
+            <span class="palette-dot" style="background:#6366f1;"></span>
+            <span class="palette-name">Tech Indigo</span>
+          </button>
+          <button class="palette-btn" data-accent="amber" onclick="window.setAccentColor('amber')">
+            <span class="palette-dot" style="background:#d97706;"></span>
+            <span class="palette-name">Rajyotsava</span>
+          </button>
+          <button class="palette-btn" data-accent="rose" onclick="window.setAccentColor('rose')">
+            <span class="palette-dot" style="background:#e11d48;"></span>
+            <span class="palette-name">Crimson</span>
+          </button>
+          <button class="palette-btn" data-accent="cyan" onclick="window.setAccentColor('cyan')">
+            <span class="palette-dot" style="background:#0891b2;"></span>
+            <span class="palette-name">Kaveri Aqua</span>
+          </button>
+          <button class="palette-btn" data-accent="slate" onclick="window.setAccentColor('slate')">
+            <span class="palette-dot" style="background:#475569;"></span>
+            <span class="palette-name">Executive Slate</span>
+          </button>
+        </div>
+      </div>
+
+      
+      <!-- Hero Banner Tone Picker -->
+      <div>
+        <label class="form-label" style="margin-bottom:10px; display:block;">Hero Banner Tone (Brightness Control)</label>
+        <div class="mode-selector-row">
+          <button class="mode-card-btn tone-btn" data-tone="default" onclick="window.setHeroTone('default')">
+            <span class="mode-icon">🌌</span>
+            <span class="mode-label">Midnight Slate</span>
+          </button>
+          <button class="mode-card-btn tone-btn" data-tone="charcoal" onclick="window.setHeroTone('charcoal')">
+            <span class="mode-icon">🖤</span>
+            <span class="mode-label">Matte Charcoal</span>
+          </button>
+          <button class="mode-card-btn tone-btn" data-tone="subtle" onclick="window.setHeroTone('subtle')">
+            <span class="mode-icon">☁️</span>
+            <span class="mode-label">Airy Minimal</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Theme Display Mode -->
+      <div>
+        <label class="form-label" style="margin-bottom:10px; display:block;">Display Mode</label>
+        <div class="mode-selector-row">
+          <button class="mode-card-btn" data-mode="light" onclick="window.setThemeMode('light')">
+            <span class="mode-icon">☀️</span>
+            <span class="mode-label">Light</span>
+          </button>
+          <button class="mode-card-btn" data-mode="dark" onclick="window.setThemeMode('dark')">
+            <span class="mode-icon">🌙</span>
+            <span class="mode-label">Dark</span>
+          </button>
+          <button class="mode-card-btn" data-mode="oled" onclick="window.setThemeMode('oled')">
+            <span class="mode-icon">🖤</span>
+            <span class="mode-label">OLED Black</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Preview Card -->
+      <div style="background:var(--bg-sunk); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:10px;">
+        <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted);">Active Theme Preview</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn btn-primary btn-sm">Primary Button</button>
+          <span class="kpi-badge success">Live SLA OK</span>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:16px; border-top:1px solid var(--border-subtle);">
+        <button class="btn btn-ghost btn-sm" onclick="window.resetThemeDefaults()">Reset Defaults</button>
+        <button class="btn btn-primary btn-sm" onclick="window.closeThemeModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outside Karnataka Service Boundary Modal Popup -->
+  <div class="outside-karnataka-overlay" id="outside-karnataka-modal" style="display:none;" onclick="if(event.target===this) window.closeOutsideKarnatakaModal()">
+    <div class="outside-karnataka-card">
+      <button class="outside-modal-close" onclick="window.closeOutsideKarnatakaModal()" aria-label="Close">✕</button>
+      
+      <div class="outside-modal-header">
+        <div class="outside-modal-icon-badge">
+          <span style="font-size:2rem;">📍</span>
+        </div>
+        <span class="outside-jurisdiction-pill">Karnataka State Boundary Notice</span>
+        <h2 class="outside-modal-title">ಸೇವೆ ಲಭ್ಯವಿಲ್ಲ · Service Not Available</h2>
+        <p class="outside-modal-subtitle">
+          Currently service is not available in this location. We will reach you soon!
+        </p>
+      </div>
+
+      <div class="outside-modal-body">
+        <div class="outside-info-callout">
+          <div style="font-size:1.2rem; line-height:1;">🏛️</div>
+          <div>
+            <b>Karnataka State Municipal Operations Only</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-secondary); line-height:1.5;">
+              CivicSphere is integrated with Karnataka civic corporations (BBMP, MCC, HDMC, etc.) across 31 Karnataka districts. We detected your selected location is outside Karnataka State jurisdiction.
+            </p>
+          </div>
+        </div>
+
+        <div class="outside-waitlist-box">
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:6px;">
+            🔔 Get notified when CivicSphere expands to your city/state:
+          </label>
+          <div style="display:flex; gap:8px;" id="outside-waitlist-form">
+            <input type="text" id="outside-waitlist-input" placeholder="Enter mobile number or email address..." class="form-input" style="flex:1; font-size:0.88rem;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.submitOutsideWaitlist()" style="white-space:nowrap; padding:8px 16px;">
+              Notify Me 🚀
+            </button>
+          </div>
+          <div id="outside-waitlist-success" style="display:none; color:#059669; font-size:0.84rem; font-weight:700; margin-top:8px;">
+            ✅ Thank you! We have added your location to our expansion priority queue. We will reach you soon!
+          </div>
+        </div>
+      </div>
+
+      <div class="outside-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="window.closeOutsideKarnatakaModal()">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.recenterToKarnataka()" style="background:#2563eb;">
+          📍 Re-center to Karnataka (Bengaluru)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Voice Assistant Orb -->
+  <button class="floating-voice-orb" id="floating-voice-orb" onclick="window.toggleVoiceAssistant()" aria-label="Talk to AI Voice Assistant" title="Tap to Speak with CivicSphere Voice AI">
+    <div class="voice-orb-rings">
+      <div class="voice-orb-ring ring-1"></div>
+      <div class="voice-orb-ring ring-2"></div>
+    </div>
+    <div class="voice-orb-core">
+      <span class="voice-orb-icon">🎙️</span>
+    </div>
+    <span class="voice-orb-tooltip">Voice AI</span>
+  </button>
+
+  <!-- CivicSphere Mitra AI Voice & Chat Assistant Trigger -->
+  <button class="chat-trigger-btn" onclick="window.toggleChatDrawer()" aria-label="Open CivicSphere Mitra Civic Guide">
+    <span class="chat-trigger-icon">💬</span>
+    <span>CivicSphere Mitra AI</span>
+    <span class="chat-trigger-voice-badge">🎙️ Voice</span>
+  </button>
+
+  <div class="chat-drawer" id="chat-drawer">
+    <div class="chat-drawer-header">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <b style="font-size:1.05rem;">CivicSphere Mitra</b>
+          <span class="voice-ai-indicator-pill">🎙️ Voice AI Active</span>
+        </div>
+        <span style="font-size:0.75rem; opacity:0.9;">Multilingual Civic AI · English, ಕನ್ನಡ, हिंदी</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="voice-mute-toggle-btn" class="chat-header-btn" onclick="window.toggleVoiceMute()" title="Toggle voice sound output">
+          🔊 Voice On
+        </button>
+        <button onclick="window.toggleChatDrawer()" class="chat-header-close-btn" aria-label="Close Assistant">✕</button>
+      </div>
+    </div>
+
+    <!-- Voice Mode Language Selector & Tap-to-Speak Bar -->
+    <div class="voice-lang-bar">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">Language:</span>
+        <button class="voice-lang-chip active" id="voice-lang-en" onclick="window.setVoiceLanguage('en-IN')">English</button>
+        <button class="voice-lang-chip" id="voice-lang-kn" onclick="window.setVoiceLanguage('kn-IN')">ಕನ್ನಡ</button>
+        <button class="voice-lang-chip" id="voice-lang-hi" onclick="window.setVoiceLanguage('hi-IN')">हिंदी</button>
+      </div>
+      <button class="voice-start-tap-btn" onclick="window.toggleVoiceListening()" title="Tap to start or stop voice input">
+        <span class="pulse-mic-dot"></span> Speak 🎙️
+      </button>
+    </div>
+
+    <!-- Active Voice Wave Visualizer Banner -->
+    <div class="voice-active-banner" id="voice-active-banner" style="display:none;">
+      <div class="voice-wave-bars">
+        <span class="wave-bar bar-1"></span>
+        <span class="wave-bar bar-2"></span>
+        <span class="wave-bar bar-3"></span>
+        <span class="wave-bar bar-4"></span>
+        <span class="wave-bar bar-5"></span>
+      </div>
+      <div class="voice-status-text" id="voice-status-text">Listening... Speak in English, Kannada, or Hindi 🎙️</div>
+      <button type="button" class="voice-cancel-btn" onclick="window.stopVoiceListening()" title="Stop listening">✕</button>
+    </div>
+
+    <div id="chat-body" style="flex:1; padding:18px 20px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+
+    <!-- Quick Suggested Voice Prompts -->
+    <div style="padding:10px 16px; background:var(--bg-sunk); border-top:1px solid var(--border-subtle); display:flex; gap:6px; overflow-x:auto;">
+      <button class="preset-chip" style="white-space:nowrap;" onclick="window.handleVoiceAssistantInput('Report a pothole')">🎙️ "Report pothole"</button>
+      <button class="preset-chip" style="white-space:nowrap;" onclick="window.handleVoiceAssistantInput('Track my complaint status')">🎙️ "Track status"</button>
+      <button class="preset-chip" style="white-space:nowrap;" onclick="window.handleVoiceAssistantInput('Show live map')">🎙️ "Show live map"</button>
+      <button class="preset-chip" style="white-space:nowrap;" onclick="window.handleVoiceAssistantInput('BBMP helpline number')">📞 "Helpline 1902"</button>
+    </div>
+
+    <form style="display:flex; align-items:center; border-top:1px solid var(--border-subtle); padding:10px 14px; background:var(--bg-surface); gap:8px;" onsubmit="event.preventDefault(); window.sendChatMessage(document.getElementById('chat-input-field').value); document.getElementById('chat-input-field').value='';">
+      <button type="button" class="chat-mic-btn" id="chat-mic-btn" onclick="window.toggleVoiceListening()" title="Tap to speak with microphone">
+        🎙️
+      </button>
+      <input type="text" id="chat-input-field" placeholder="Type or tap 🎙️ to speak (English, ಕನ್ನಡ, हिंदी)..." style="flex:1; border:none; outline:none; background:transparent; font-size:0.9rem;">
+      <button type="submit" class="btn btn-primary btn-sm" style="padding:7px 16px;">Send</button>
+    </form>
+  </div>
+
+  <!-- Backend API Settings Modal (Render / Local) -->
+  <div class="modal-overlay" id="api-settings-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div style="background:var(--bg-surface); padding:24px; border-radius:var(--radius-md); max-width:480px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.3); border:1px solid var(--border-subtle);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="font-size:1.15rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>🔌</span> Backend API Settings
+        </h3>
+        <button onclick="window.closeApiSettingsModal()" style="border:none; background:transparent; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">
+        Configure the backend REST API endpoint for Render or Localhost. The frontend automatically connects to your local server on localhost, or your deployed Render backend in production.
+      </p>
+      <div style="background:var(--bg-sunk); padding:10px 14px; border-radius:var(--radius-sm); font-size:0.84rem; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between;">
+        <span>Current Active API:</span>
+        <b id="active-api-display" style="font-family:var(--font-mono); color:var(--accent-primary); word-break:break-all;"></b>
+      </div>
+      <label style="font-size:0.82rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">Custom Render API URL:</label>
+      <input type="text" id="custom-api-input" class="form-input" placeholder="https://your-service.onrender.com" style="margin-bottom:14px; width:100%;">
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="window.resetDefaultApiUrl()">Reset to Default</button>
+        <button class="btn btn-primary btn-sm" onclick="window.saveCustomApiUrl(document.getElementById('custom-api-input').value)">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notice -->
+  <div id="global-toast" class="toast-notice"></div>
+
+  <!-- Main JavaScript App Entrypoint -->
+  <script type="module">
+    import { initApp, toggleChatDrawer, sendChatMessage, locateUserOnLiveMap, detectCurrentLocationForReport } from './js/app.js';
+    import { toggleVoiceAssistant, startVoiceListening, stopVoiceListening, toggleVoiceListening, setVoiceLanguage, toggleVoiceMute, handleVoiceCommand } from './js/voice.js';
+    import { Config } from './js/config.js';
+    import { ApiClient } from './js/api.js';
+
+    window.toggleChatDrawer = toggleChatDrawer;
+    window.sendChatMessage = sendChatMessage;
+    window.locateUserOnLiveMap = locateUserOnLiveMap;
+    window.detectCurrentLocationForReport = detectCurrentLocationForReport;
+
+    // API Settings Modal Bindings
+    window.openApiSettingsModal = () => {
+      const modal = document.getElementById('api-settings-modal');
+      if (modal) {
+        document.getElementById('active-api-display').textContent = Config.apiBaseUrl;
+        document.getElementById('custom-api-input').value = localStorage.getItem('civicsphere_api_url') || '';
+        modal.style.display = 'flex';
+      }
+    };
+    window.closeApiSettingsModal = () => {
+      const modal = document.getElementById('api-settings-modal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    // Multilingual Voice Assistant Global Bindings
+    window.toggleVoiceAssistant = toggleVoiceAssistant;
+    window.startVoiceListening = startVoiceListening;
+    window.stopVoiceListening = stopVoiceListening;
+    window.toggleVoiceListening = toggleVoiceListening;
+    window.setVoiceLanguage = (lang) => {
+      setVoiceLanguage(lang);
+      document.querySelectorAll('.voice-lang-chip').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `voice-lang-${lang.slice(0, 2)}`);
+      });
+    };
+    window.toggleVoiceMute = toggleVoiceMute;
+    window.handleVoiceAssistantInput = (text) => {
+      handleVoiceCommand(text);
+    };
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
