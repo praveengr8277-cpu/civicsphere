@@ -1,8 +1,17 @@
-﻿# 🏛️ CivicSphere Karnataka · Multi-Agent Civic Operations Platform
+# 🏛️ CivicSphere Karnataka · Multi-Agent Civic Operations Platform
 
 > **Full-Stack Production Repository** structured for seamless decoupled deployment:
 > - 🚀 **Backend API** &rarr; Deploy to **[Render](https://render.com)** (FastAPI / Uvicorn with CORS & Persistent State)
 > - 🌐 **Frontend App** &rarr; Deploy to **[Vercel](https://vercel.com)** (Single Page Web Application)
+
+---
+
+## ⚡ 1-Click Instant Cloud Deployments
+
+| Component | Target Platform | 1-Click Deploy |
+| :--- | :--- | :--- |
+| **Backend REST API** | **Render** | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/praveengr8277-cpu/civicsphere) |
+| **Frontend Web App** | **Vercel** | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/praveengr8277-cpu/civicsphere&root-directory=frontend) |
 
 ---
 
