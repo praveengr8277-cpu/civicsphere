@@ -1679,7 +1679,7 @@ export async function executeAgentPipeline() {
     parent.notifications.push({
       at: new Date(nowMs()).toISOString(),
       audience: name || 'Citizen',
-      message: `Your ${channel} report has been linked to active Master Work Order ${parent.work_order_id}. You will receive SMS/WhatsApp updates when resolved.`
+      message: `Your ${channel} report has been linked to active Master Work Order ${parent.work_order_id}. You will receive SMS alerts when resolved.`
     });
 
     finalId = parent.id;
