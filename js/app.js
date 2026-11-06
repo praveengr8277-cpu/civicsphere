@@ -1484,28 +1484,18 @@ function renderWizardStepContent() {
         <div class="form-group">
           <label class="form-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span>Reporting Channel</span>
-            <span style="font-size:0.75rem; color:var(--accent-primary); font-weight:700;">Multi-Channel Ingestion</span>
+            <span style="font-size:0.75rem; color:var(--accent-primary); font-weight:700;">Direct Citizen Portal</span>
           </label>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px;">
             <div class="channel-card-label ${State.reportingState.channel === 'Web Portal' ? 'active' : ''}" onclick="window.setReportingChannel('Web Portal')">
               <input type="radio" name="report-channel" value="Web Portal" ${State.reportingState.channel === 'Web Portal' ? 'checked' : ''} style="display:none;">
               <span style="font-size:1.3rem;">🌐</span>
-              <span style="font-size:0.82rem; font-weight:700;">Web Portal</span>
-            </div>
-            <div class="channel-card-label ${State.reportingState.channel === 'WhatsApp Bot' ? 'active' : ''}" onclick="window.setReportingChannel('WhatsApp Bot')">
-              <input type="radio" name="report-channel" value="WhatsApp Bot" ${State.reportingState.channel === 'WhatsApp Bot' ? 'checked' : ''} style="display:none;">
-              <span style="font-size:1.3rem;">💬</span>
-              <span style="font-size:0.82rem; font-weight:700;">WhatsApp Bot</span>
-            </div>
-            <div class="channel-card-label ${State.reportingState.channel === 'Call Center' ? 'active' : ''}" onclick="window.setReportingChannel('Call Center')">
-              <input type="radio" name="report-channel" value="Call Center" ${State.reportingState.channel === 'Call Center' ? 'checked' : ''} style="display:none;">
-              <span style="font-size:1.3rem;">📞</span>
-              <span style="font-size:0.82rem; font-weight:700;">Call Center 1902</span>
+              <span style="font-size:0.85rem; font-weight:700;">Web Portal</span>
             </div>
             <div class="channel-card-label ${State.reportingState.channel === 'Mobile App' ? 'active' : ''}" onclick="window.setReportingChannel('Mobile App')">
               <input type="radio" name="report-channel" value="Mobile App" ${State.reportingState.channel === 'Mobile App' ? 'checked' : ''} style="display:none;">
               <span style="font-size:1.3rem;">📱</span>
-              <span style="font-size:0.82rem; font-weight:700;">Mobile App</span>
+              <span style="font-size:0.85rem; font-weight:700;">Mobile App</span>
             </div>
           </div>
         </div>
