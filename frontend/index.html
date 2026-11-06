@@ -44,12 +44,12 @@
 
       <!-- Decongested Desktop Navigation Links -->
       <nav class="nav-links">
-        <a href="#home" class="nav-link active">Home</a>
-        <a href="#report" class="nav-link">Report</a>
-        <a href="#track" class="nav-link">Track</a>
-        <a href="#map" class="nav-link">Live Map</a>
-        <a href="#officer" class="nav-link">Officer Queue</a>
-        <a href="#dashboard" class="nav-link">Command Centre</a>
+        <a href="#home" class="nav-link active" onclick="window.navigateTo('home'); return false;">Home</a>
+        <a href="#report" class="nav-link" onclick="window.navigateTo('report'); return false;">Report</a>
+        <a href="#track" class="nav-link" onclick="window.navigateTo('track'); return false;">Track</a>
+        <a href="#map" class="nav-link" onclick="window.navigateTo('map'); return false;">Live Map</a>
+        <a href="#officer" class="nav-link" onclick="window.navigateTo('officer'); return false;">Officer Queue</a>
+        <a href="#dashboard" class="nav-link" onclick="window.navigateTo('dashboard'); return false;">Command Centre</a>
       </nav>
 
       <!-- Action Items & Theme Switcher -->
@@ -478,11 +478,21 @@
         <!-- Modal Footer Actions -->
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
           <button type="button" class="btn btn-secondary" onclick="window.closeResolveModal()">Cancel</button>
-          <button type="submit" id="btn-submit-resolution" class="btn btn-primary" style="background:var(--color-success); border-color:var(--color-success);">
-            ✅ Certify & Mark as Resolved
+          <button type="button" id="btn-submit-resolution" class="btn btn-primary" onclick="window.submitResolutionModal();" style="background:var(--color-success); border-color:var(--color-success); font-weight:700;">
+            ✅ Certify & Close Case
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Immediate Post-Report Complaint Summary Modal Popup -->
+  <div class="modal-overlay" id="complaint-summary-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(6px); padding:16px;">
+    <div style="background:var(--bg-surface); border-radius:var(--radius-lg); max-width:580px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-xl); border:1.5px solid var(--border-subtle); padding:24px 28px; position:relative; animation:modalZoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+      <button onclick="window.closeComplaintSummaryModal()" style="position:absolute; top:16px; right:16px; border:none; background:var(--bg-sunk); color:var(--text-muted); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; cursor:pointer;" aria-label="Close">✕</button>
+      <div id="complaint-summary-modal-body">
+        <!-- Dynamically injected summary & timings -->
+      </div>
     </div>
   </div>
 
@@ -591,5 +601,29 @@
 
     document.addEventListener('DOMContentLoaded', initApp);
   </script>
+
+  <!-- Fixed Mobile Bottom Navigation Bar (Guarantees Track & Report Always Accessible on Phones) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button type="button" class="mobile-nav-item active" onclick="window.navigateTo('home'); return false;" id="mob-nav-home" aria-label="Home">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">Home</span>
+    </button>
+    <button type="button" class="mobile-nav-item" onclick="window.navigateTo('report'); return false;" id="mob-nav-report" aria-label="Report Issue">
+      <span class="mobile-nav-icon">📸</span>
+      <span class="mobile-nav-label">Report</span>
+    </button>
+    <button type="button" class="mobile-nav-item" onclick="window.navigateTo('track'); return false;" id="mob-nav-track" aria-label="Track Incident">
+      <span class="mobile-nav-icon">🔍</span>
+      <span class="mobile-nav-label">Track</span>
+    </button>
+    <button type="button" class="mobile-nav-item" onclick="window.navigateTo('map'); return false;" id="mob-nav-map" aria-label="Live Map">
+      <span class="mobile-nav-icon">🗺️</span>
+      <span class="mobile-nav-label">Map</span>
+    </button>
+    <button type="button" class="mobile-nav-item" onclick="window.navigateTo('officer'); return false;" id="mob-nav-officer" aria-label="Officer Queue">
+      <span class="mobile-nav-icon">👷</span>
+      <span class="mobile-nav-label">Officer</span>
+    </button>
+  </nav>
 </body>
 </html>
