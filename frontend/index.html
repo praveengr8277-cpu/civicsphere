@@ -20,6 +20,14 @@
   <!-- Modern Civic Design System -->
   <link rel="icon" type="image/png" href="assets/logo_icon.png">
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Progressive Web App (PWA & Android WebAPK) Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
 </head>
 <body>
 
@@ -61,6 +69,9 @@
         </button>
         <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Toggle Quick Dark/Light" aria-label="Toggle Quick Dark/Light">
           🌓
+        </button>
+        <button id="pwa-install-nav-btn" class="btn btn-secondary btn-sm" onclick="window.installPwaApp()" title="Install as Android App (APK)" style="display:inline-flex; align-items:center; gap:5px; border-color:var(--accent-primary); color:var(--accent-primary);">
+          <span>📲</span> <span style="font-size:0.78rem; font-weight:700;">Install App</span>
         </button>
         <button class="btn btn-primary btn-sm" onclick="window.location.hash='#report'">
           + Report Issue
@@ -462,6 +473,39 @@
     window.handleVoiceAssistantInput = (text) => {
       handleVoiceCommand(text);
     };
+
+    // PWA & Android WebAPK Installation Engine
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install-nav-btn');
+      if (btn) btn.style.display = 'inline-flex';
+    });
+
+    window.installPwaApp = () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            console.log('[PWA] User accepted installation of CivicSphere WebAPK');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert('To install the app on Android: Tap your browser menu (⋮ in the top right) and tap "Install app" or "Add to Home screen" 📲');
+      }
+    };
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[PWA] Service Worker registered with scope:', reg.scope);
+        }).catch((err) => {
+          console.log('[PWA] Service Worker registration failed:', err);
+        });
+      });
+    }
 
     document.addEventListener('DOMContentLoaded', initApp);
   </script>

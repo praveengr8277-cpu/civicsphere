@@ -1,0 +1,30 @@
+{
+  "name": "CivicSphere Karnataka",
+  "short_name": "CivicSphere",
+  "description": "Smart Civic Operations & Rapid Incident Management Platform for Karnataka State",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "categories": [
+    "government",
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
