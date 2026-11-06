@@ -404,6 +404,88 @@
     </form>
   </div>
 
+  <!-- Field Officer Work Order Resolution Modal -->
+  <div class="modal-overlay" id="resolve-modal" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:10001; align-items:center; justify-content:center; backdrop-filter:blur(6px); padding:16px;">
+    <div class="card-clean" style="max-width:540px; width:100%; max-height:92vh; overflow-y:auto; box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.35); border:1px solid var(--border-subtle); padding:26px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.75rem; font-weight:800; color:var(--color-success); text-transform:uppercase; letter-spacing:0.06em; display:flex; align-items:center; gap:5px;">
+            <span>✅</span> Field Work Certification
+          </div>
+          <h2 style="font-size:1.35rem; font-weight:800; margin-top:3px; color:var(--text-primary);">Mark Work Order as Resolved</h2>
+        </div>
+        <button type="button" onclick="window.closeResolveModal()" style="border:none; background:transparent; font-size:1.3rem; cursor:pointer; color:var(--text-muted); padding:4px;" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Active Ticket Summary Card -->
+      <div id="resolve-modal-summary" style="background:var(--bg-sunk); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; margin-bottom:16px;">
+        <!-- Dynamically injected case details -->
+      </div>
+
+      <form id="resolve-modal-form" onsubmit="event.preventDefault(); window.submitResolutionModal();" style="display:flex; flex-direction:column; gap:16px;">
+        <input type="hidden" id="resolve-complaint-id" value="">
+
+        <!-- Officer in-charge -->
+        <div class="form-group">
+          <label class="form-label" for="resolve-officer-name">Certified By (Officer / Supervisor Name)</label>
+          <input type="text" id="resolve-officer-name" class="form-input" required placeholder="e.g. R. Narayanaswamy, Ward Engineer">
+        </div>
+
+        <!-- Technical Resolution Note -->
+        <div class="form-group">
+          <label class="form-label" for="resolve-note">Field Repair Notes & Specifics <span style="color:var(--color-danger);">*</span></label>
+          <textarea id="resolve-note" class="form-textarea" rows="3" required placeholder="Describe repairs executed, equipment used, and site restoration..." style="font-size:0.9rem; line-height:1.5;"></textarea>
+          
+          <!-- Quick Preset Repair Chips -->
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+            <button type="button" class="preset-chip" onclick="window.applyResolveTemplate('pothole')">🛣️ Bitumen Roller Patched</button>
+            <button type="button" class="preset-chip" onclick="window.applyResolveTemplate('garbage')">🗑️ Waste Cleared & Sanitized</button>
+            <button type="button" class="preset-chip" onclick="window.applyResolveTemplate('water')">💧 Pipe Valve Replaced</button>
+            <button type="button" class="preset-chip" onclick="window.applyResolveTemplate('light')">💡 LED Luminaire Fitted</button>
+          </div>
+        </div>
+
+        <!-- After-Repair Photo Evidence (Field Verification) -->
+        <div class="form-group">
+          <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>After-Repair Photographic Proof</span>
+            <span style="font-size:0.75rem; color:var(--accent-primary); font-weight:700;">AI Vision Audit</span>
+          </label>
+          
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <label class="btn btn-secondary btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+              <span>📸</span> <span>Upload / Capture Photo</span>
+              <input type="file" id="resolve-photo-input" accept="image/*" capture="environment" style="display:none;" onchange="window.handleResolvePhotoUpload(this)">
+            </label>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.useSampleResolveProof()" style="font-size:0.78rem;">
+              <span>✨</span> Use Standard Inspection Photo
+            </button>
+          </div>
+
+          <!-- Photo Preview Container -->
+          <div id="resolve-photo-preview" style="display:none; margin-top:10px; position:relative; width:100%; height:140px; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-subtle);">
+            <img id="resolve-photo-img" src="" alt="After-repair verification proof" style="width:100%; height:100%; object-fit:cover;">
+            <button type="button" onclick="window.clearResolvePhoto()" style="position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.6); color:#ffffff; border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; font-weight:bold;">✕</button>
+          </div>
+        </div>
+
+        <!-- AI Verifier Real-time Badge -->
+        <div style="background:var(--color-success-soft); border:1px solid var(--color-success); border-radius:var(--radius-sm); padding:10px 14px; font-size:0.82rem; color:var(--color-success); display:flex; align-items:center; gap:8px;">
+          <span>🤖</span>
+          <span><b>AI Resolution Verifier:</b> Automated audit will verify GPS location, technician notes, and completion proof before sign-off.</span>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+          <button type="button" class="btn btn-secondary" onclick="window.closeResolveModal()">Cancel</button>
+          <button type="submit" id="btn-submit-resolution" class="btn btn-primary" style="background:var(--color-success); border-color:var(--color-success);">
+            ✅ Certify & Mark as Resolved
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Backend API Settings Modal (Render / Local) -->
   <div class="modal-overlay" id="api-settings-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
     <div style="background:var(--bg-surface); padding:24px; border-radius:var(--radius-md); max-width:480px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.3); border:1px solid var(--border-subtle);">

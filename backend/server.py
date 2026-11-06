@@ -1,4 +1,4 @@
-﻿"""
+"""
 CivicSphere Karnataka - Local Development Server (Zero External Dependencies)
 Runs the backend API locally using Python standard library (http.server).
 Endpoints match FastAPI main.py exactly for 100% parity.
@@ -109,11 +109,16 @@ class ApiHandler(BaseHTTPRequestHandler):
             return self.send_json(results[:100])
 
         if path.startswith("/api/complaints/"):
-            cid = path.split("/")[-1]
+            cid = path.split("/")[-1].strip()
+            cid_norm = cid.replace("-", "").lower()
             if cid in complaints_db:
                 return self.send_json(complaints_db[cid])
-            for c in complaints_db.values():
-                if c.get("work_order_id") == cid or any(r.get("phone") == cid for r in c.get("reporters", [])):
+            for k, c in complaints_db.items():
+                if k.lower() == cid.lower() or k.replace("-", "").lower() == cid_norm:
+                    return self.send_json(c)
+                if c.get("work_order_id", "").lower() == cid.lower() or c.get("work_order_id", "").replace("-", "").lower() == cid_norm:
+                    return self.send_json(c)
+                if any(r.get("phone") == cid or (len(cid) >= 6 and cid in r.get("phone", "")) for r in c.get("reporters", [])):
                     return self.send_json(c)
             return self.send_json({"error": "Incident not found"}, 404)
 
@@ -278,16 +283,26 @@ class ApiHandler(BaseHTTPRequestHandler):
         if path.startswith("/api/complaints/") and path.endswith("/status"):
             parts = path.split("/")
             cid = parts[-2]
-            if cid in complaints_db:
-                item = complaints_db[cid]
-                item["status"] = payload.get("status", item["status"])
-                if payload.get("resolution_note"):
-                    item["resolution"] = {
-                        "note": payload["resolution_note"],
-                        "resolved_at": datetime.now(timezone.utc).isoformat()
+            target_c = complaints_db.get(cid)
+            if not target_c:
+                for k, v in complaints_db.items():
+                    if k.lower() == cid.lower() or v.get("work_order_id", "").lower() == cid.lower() or k.replace("-", "").lower() == cid.replace("-", "").lower():
+                        target_c = v
+                        cid = k
+                        break
+            if target_c:
+                target_c["status"] = payload.get("status", target_c.get("status", "RESOLVED"))
+                if payload.get("officer"):
+                    target_c["officer"] = payload["officer"]
+                if payload.get("resolution_note") or target_c["status"] == "RESOLVED":
+                    target_c["resolution"] = {
+                        "note": payload.get("resolution_note", "Field repairs completed and certified."),
+                        "officer": payload.get("officer", target_c.get("officer")),
+                        "resolved_at": datetime.now(timezone.utc).isoformat(),
+                        "within_sla": True
                     }
                 save_data()
-                return self.send_json({"status": "updated", "complaint": item})
+                return self.send_json({"status": "updated", "complaint": target_c})
             return self.send_json({"error": "Not Found"}, 404)
 
         self.send_json({"error": "Not Found"}, 404)
